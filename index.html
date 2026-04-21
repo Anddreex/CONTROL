@@ -1641,6 +1641,13 @@ async function loadSPSites() {
       <h2 style="color: var(--accent); margin: 0; font-family: 'Space Mono', monospace; font-size: 18px;">EXPLORADOR SHAREPOINT</h2>
       <button onclick="closeSPNav()" style="background: none; border: none; color: #ff6b35; cursor: pointer; font-size: 24px;">✕</button>
     </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+  <h3 style="font-size: 14px;">Explorador de SharePoint</h3>
+  <button id="btn-new-folder" class="btn-secondary" style="padding: 4px 8px; font-size: 11px; background: var(--surface3); border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; cursor: pointer;">
+    + Nueva Carpeta
+  </button>
+</div>
     
     <div id="sp-breadcrumb" style="font-size: 11px; color: #666; margin-bottom: 15px; font-family: 'Space Mono';">SITIOS DISPONIBLES</div>
     
@@ -3277,6 +3284,58 @@ window.onclick = function(event) {
     closeSPNav();
   }
 }
+
+
+// --- LÓGICA PARA CREAR NUEVA CARPETA EN SHAREPOINT ---
+
+async function createSPFolder() {
+  const folderName = prompt("Ingrese el nombre de la nueva carpeta:");
+  if (!folderName) return;
+
+  try {
+    const token = await getToken();
+    const driveId = currentSP.driveId;
+    const path = currentSP.folderPath;
+
+    if (!driveId) {
+      showToast("Primero seleccione una biblioteca", "error");
+      return;
+    }
+
+    // Construimos la URL según si estamos en la raíz o en una subcarpeta
+    const url = path === "" 
+      ? `https://graph.microsoft.com/v1.0/drives/${driveId}/root/children`
+      : `https://graph.microsoft.com/v1.0/drives/${driveId}/root:/${encodeURIComponent(path )}:/children`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "name": folderName,
+        "folder": { },
+        "@microsoft.graph.conflictBehavior": "fail"
+      })
+    });
+
+    if (response.ok) {
+      showToast("Carpeta creada con éxito", "success");
+      // Recargamos la vista usando TU función original
+      loadSPFolders(currentSP.siteId, driveId, path);
+    } else {
+      const err = await response.json();
+      showToast("Error: " + (err.error ? err.error.message : "No se pudo crear"), "error");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    showToast("Error de conexión", "error");
+  }
+}
+
+// Asegúrate de que el evento esté bien conectado
+document.getElementById('btn-new-folder').onclick = createSPFolder;
 
 
 
