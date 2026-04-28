@@ -81,7 +81,7 @@ async function loadSPSites() {
       await msalInstance.initialize();
       
       // 2. Forzar la selección de cuenta para evitar bloqueos
-      const loginResponse = await msalInstance.loginPopup({
+      const loginResponse = await msalInstance.loginRedirect({
         ...loginRequest,
         prompt: "select_account"
       });
