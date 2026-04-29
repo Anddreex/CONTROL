@@ -81,7 +81,7 @@ async function loadSPSites() {
       await msalInstance.initialize();
       
       // 2. Forzar la selección de cuenta para evitar bloqueos
-      const loginResponse = await msalInstance.loginRedirect({
+      const loginResponse = await msalInstance.loginPopup({
         ...loginRequest,
         prompt: "select_account"
       });
@@ -1976,7 +1976,7 @@ function updateDocsList() {
 
     // OK button → save override and refresh
     div.querySelector('.doc-edit-ok').addEventListener('click', () => {
-      const newPrefix = div.querySelector(`#edit-prefix-${i}`).value.trim() || (inpPrefix.value.trim()|| 'DOC').toUpperCase;
+      const newPrefix = div.querySelector(`#edit-prefix-${i}`).value.trim() || (inpPrefix.value.trim()|| 'DOC').toUpperCase();
       const newConsec = div.querySelector(`#edit-consec-${i}`).value.trim();
       if (!newConsec || isNaN(Number(newConsec))) {
         showToast('Consecutivo inválido', 'error'); return;
@@ -2067,11 +2067,10 @@ async function generateAll(destino) {
   }
 
   try {
-    // Always create a fresh Uint8Array copy for pdf-lib — never reuse a transferred buffer
-    const freshBytes = new Uint8Array(pdfArrayBuffer.slice(0));
+    
     let srcDoc;
     try {
-      srcDoc = await PDFLib.PDFDocument.load(freshBytes, { ignoreEncryption: true });
+      srcDoc = await PDFLib.PDFDocument.load(pdfArrayBuffer, { ignoreEncryption: true });
     } catch (loadErr) {
       if (loadErr.name === 'PasswordException' || loadErr.message.includes('password')) {
         throw new Error('Este PDF requiere contraseña o está protegido. Por favor usa un archivo sin protecciones.');
