@@ -1817,7 +1817,7 @@ async function renderPage(card, num) {
     const page = await pdfDoc.getPage(num);
     const vp = page.getViewport({ scale: 1.0 });
     // Render at 420px wide for crisp thumbnails (2x effective resolution)
-    const scale = 420 / vp.width;
+    const scale = 380 / vp.width;
     const viewport = page.getViewport({ scale });
 
     const canvas = document.createElement('canvas');
