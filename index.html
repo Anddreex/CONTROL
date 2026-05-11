@@ -1899,7 +1899,7 @@ function getDocName(index) {
 function getDocInfo(index) {
   // Walk backwards to find the most recent anchor (override or the global config)
   let anchorIndex = -1;
-  let anchorPrefix = inpPrefix.value.trim().toUpperCase() || 'DOC';
+  let anchorPrefix = inpPrefix.value.trim().toUpperCase() || '';
   let anchorConsec = inpConsec.value.trim() || '0';
   let padLen = anchorConsec.length;
 
