@@ -1976,7 +1976,7 @@ function updateDocsList() {
 
     // OK button → save override and refresh
     div.querySelector('.doc-edit-ok').addEventListener('click', () => {
-      const newPrefix = div.querySelector(`#edit-prefix-${i}`).value.trim() || (inpPrefix.value.trim()|| 'DOC').toUpperCase();
+      const newPrefix = div.querySelector(`#edit-prefix-${i}`).value.trim() || (inpPrefix.value.trim()|| '').toUpperCase();
       const newConsec = div.querySelector(`#edit-consec-${i}`).value.trim();
       if (!newConsec || isNaN(Number(newConsec))) {
         showToast('Consecutivo inválido', 'error'); return;
